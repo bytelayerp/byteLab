@@ -8,7 +8,8 @@ const app = express();
 const userRouter = require("./router/userRouter.js");
 const contactRouter = require("./router/contactRouter.js");
 const projectRouter = require("./router/projectRouter.js");
-// Security
+// Security// Trust proxy for Replit environment
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

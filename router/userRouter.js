@@ -9,4 +9,5 @@ router.post(
   authController.createUser
 );
 router.post("/login", authController.login);
+router.get("/getall", authController.getAllUsers);
 module.exports = router;
