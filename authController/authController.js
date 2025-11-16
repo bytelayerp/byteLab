@@ -100,7 +100,30 @@ exports.login = async (req, res) => {
     });
   }
 };
-
+// get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password -email");
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      const errors = Object.values(err.errors).map((el) => el.message);
+      return res
+        .status(400)
+        .json({ status: "fail", message: errors.join(". ") });
+    }
+    res.status(500).json({
+      status: "server error",
+      message: err.message,
+    });
+  }
+};
 exports.protect = async (req, res, next) => {
   try {
     let token;
@@ -145,11 +168,9 @@ exports.protect = async (req, res, next) => {
 exports.strictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res
-        .status(403)
-        .json({
-          message: "You do not have the authority to perform this action",
-        });
+      return res.status(403).json({
+        message: "You do not have the authority to perform this action",
+      });
     }
     next();
   };
